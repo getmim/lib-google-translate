@@ -7,22 +7,21 @@
 
 namespace LibGoogleTranslate\Library;
 
+use LibCurl\Library\Curl;
+
 class Translate
 {
     protected static string $lastError = '';
 
-    public static function translate(string $to, string $text, ?string $from = null): ?string
+    public static function translate(string $to, string $text): ?string
     {
         $apiKey = \Mim::$app->config->libGoogleTranslate->apiKey;
-        $url = "https://translation.googleapis.com/v3/projects/v3:translateText?key=" . $apiKey;
+        $url = "https://translation.googleapis.com/language/translate/v2?key=" . $apiKey;
 
         $data = [
-            'contents' => [$text],
-            'targetLanguageCode' => $to
+            'q' => $text,
+            'target' => $to
         ];
-        if ($from) {
-            $data['sourceLanguageCode'] = $from;
-        }
 
         $res = Curl::fetch([
             'url' => $url,
@@ -38,13 +37,13 @@ class Translate
             return null;
         }
 
-        if (isset($res['error'])) {
-            self::$lastError = $res['error'];
+        if (isset($res->error)) {
+            self::$lastError = $res->error->message;
             return null;
         }
 
-        if (isset($responseData['translations'][0]['translatedText'])) {
-            return $responseData['translations'][0]['translatedText'];
+        if (isset($res->data->translations[0]->translatedText)) {
+            return $res->data->translations[0]->translatedText;
         }
 
         self::$lastError = 'Google API Response Invalid';

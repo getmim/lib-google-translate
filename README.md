@@ -1,5 +1,7 @@
 # lib-google-translate
 
+Adalah library yang mempermudah proses translasi teks ke berbagai bahasa menggunakan service google
+
 ## Instalasi
 
 ```
@@ -24,8 +26,7 @@ return [
 use LibGoogleTranslate\Library\Translate;
 
 $text = 'How are you?';
-$from = 'en';
 $to = 'id';
 
-$res = Translate::translate($to, $text, $from);
+$res = Translate::translate($to, $text);
 ```
